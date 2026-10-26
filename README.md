@@ -2,8 +2,9 @@
 
 Схеми шифрування полів Webitel і їхня поставка для `cryptoctl`.
 
-- **Go-модуль** `github.com/webitel/webitel-cryptoctl/schema`: baseline-схеми, які сервіси
-  вкомпільовують (`schema.Register(wcrypto.CallCenter)`).
+- **Go-модуль** `github.com/webitel/webitel-cryptoctl/schema` (окремий `schema/go.mod`, лише
+  `cryptostore`): baseline-схеми, які сервіси вкомпільовують (`schema.Register(wcrypto.CallCenter)`).
+  Корінь репо — окремий модуль з `cryptoctl` як tool; сервіси його не імпортують.
 - **Deb-пакет `webitel-cryptoctl`**: ті самі схеми, конфіг сховища, `cryptoctl` і обгортка
   `webitel-cryptoctl` для ops (`status`, `usage`, `migrate`, `can-retire`, …).
 
@@ -27,21 +28,26 @@
 
 1. PR у цей репо: зміна `.jsonc` у `schema/schema.d/`. Новий файл додається в `schema.go`
    і `store.d/pg.jsonc` (у пакет іде весь каталог `schema/schema.d/`).
-2. Тег (лише на гілці релізу, див. нижче), а потім `go get github.com/webitel/webitel-cryptoctl@vX.Y.Z`
-   у **всіх** сервісах, які пишуть у змінену таблицю. Вони виходять разом: якщо один сервіс
+2. Теги `schema/vX.Y.Z` і deb `vA.B.C` з `A.B.C >= X.Y.Z` (лише на гілці релізу, див. нижче),
+   а потім `go get github.com/webitel/webitel-cryptoctl/schema@vX.Y.Z` у **всіх** сервісах, які пишуть у змінену таблицю. Вони виходять разом: якщо один сервіс
    шифрує поле, а інший про це не знає, вони ламають дані одне одному в БД.
 3. Deb `webitel-cryptoctl` публікується **раніше** за сервіси або одночасно з ними. Сервіс на
    гілці релізу залежить від `webitel-cryptoctl (>= версія з його go.mod)`.
 
 ## Версії та гілки
 
-- Semver: один тег `vX.Y.Z` дає і Go-модуль, і deb `X.Y.Z`.
+- Semver, два модулі з власними тегами:
+  - `schema/vX.Y.Z` — Go-модуль схем, його версія стоїть у `go.mod` сервісів;
+  - `vA.B.C` — deb `webitel-cryptoctl` (схеми + `cryptoctl`).
+- **Версія deb ≥ версії схем.** Сервіс на релізі залежить від `webitel-cryptoctl (>= X.Y.Z)`,
+  де `X.Y.Z` — версія `schema` у його `go.mod`. Тож зміна схеми завжди виходить разом із deb
+  такої самої або вищої версії; новий `cryptoctl` без зміни схем — лише тег deb.
 - Кожна лінійка продукту має свою гілку `vYY.MM` і свій minor (26.10 → `0.1.x`).
   Хотфікси — patch-теги на гілці релізу.
 - Теги ставляться **лише на гілках `vYY.MM`**, не на `main`. Тег публікується в компонент своєї
   гілки (`26.10-releases`), тож інсталяції різних релізів не бачать пакетів одна одної.
-- `main` збирається як dev (`0.0.0~dev-N`). На `main` сервіси залежать від
-  `webitel-cryptoctl` без версії.
+- `main` збирається як dev (`~dev`-версія). На `main` сервіси залежать від
+  `webitel-cryptoctl` без версії: `~dev` у dpkg менша за реліз, тож `>=` там не виконався б.
 
 ### Оновити `cryptoctl` у лінійці
 
