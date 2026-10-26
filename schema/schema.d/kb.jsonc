@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "units": {
+    "kb.embedding_model": {
+      "fields": {
+        "config": {}
+      }
+    }
+  }
+}

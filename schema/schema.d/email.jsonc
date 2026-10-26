@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "units": {
+    "email.profile": {
+      "fields": {
+        "password": {},
+        "oauth_client_secret": {},
+        "oauth_refresh_token": {}
+      }
+    }
+  }
+}

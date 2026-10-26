@@ -3,6 +3,7 @@ package schema_test
 import (
 	"encoding/json"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -31,6 +32,8 @@ var configs = map[string]*cryptoschema.Config{
 	"directory":   schema.Directory,
 	"chat":        schema.Chat,
 	"call_center": schema.CallCenter,
+	"email":       schema.Email,
+	"kb":          schema.KB,
 }
 
 func TestUnitsDisjoint(t *testing.T) {
@@ -73,4 +76,30 @@ func TestFlatDottedKeyPreserved(t *testing.T) {
 		}
 	}
 	t.Errorf("props has no flat key %q", "oauth.id_token")
+}
+
+func TestDevSchemas(t *testing.T) {
+	want := map[string][]string{
+		"email.profile":      {"oauth_client_secret", "oauth_refresh_token", "password"},
+		"kb.embedding_model": {"config"},
+	}
+	for _, c := range []*cryptoschema.Config{schema.Email, schema.KB} {
+		for unit, u := range c.Units {
+			var got []string
+			for f, p := range u.Fields {
+				if p.Search || len(p.Nested) > 0 {
+					t.Errorf("%s.%s: want a plain scalar field", unit, f)
+				}
+				got = append(got, f)
+			}
+			slices.Sort(got)
+			if !slices.Equal(got, want[unit]) {
+				t.Errorf("%s fields = %q, want %q", unit, got, want[unit])
+			}
+			delete(want, unit)
+		}
+	}
+	for unit := range want {
+		t.Errorf("unit %s missing", unit)
+	}
 }

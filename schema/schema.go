@@ -13,6 +13,10 @@ var (
 	chatJSON string
 	//go:embed schema.d/call_center.jsonc
 	callCenterJSON string
+	//go:embed schema.d/email.jsonc
+	emailJSON string
+	//go:embed schema.d/kb.jsonc
+	kbJSON string
 )
 
 var (
@@ -22,4 +26,8 @@ var (
 	Chat = cryptoschema.MustParseConfig(chatJSON)
 	// CallCenter is the schema of the call_center.* tables (engine, flow_manager).
 	CallCenter = cryptoschema.MustParseConfig(callCenterJSON)
+	// Email is the schema of the email.* tables (webitel-emails, dev only).
+	Email = cryptoschema.MustParseConfig(emailJSON)
+	// KB is the schema of the kb.* tables (webitel-kb, dev only).
+	KB = cryptoschema.MustParseConfig(kbJSON)
 )

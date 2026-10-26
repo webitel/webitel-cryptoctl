@@ -19,6 +19,12 @@
 | `schema/schema.d/directory.jsonc` | `directory.*` | webitel.go |
 | `schema/schema.d/chat.jsonc` | `chat.*` | chat_manager |
 | `schema/schema.d/call_center.jsonc` | `call_center.*` | engine, flow_manager |
+| `schema/schema.d/email.jsonc` | `email.*` | webitel-emails (лише `main`) |
+| `schema/schema.d/kb.jsonc` | `kb.*` | webitel-kb (лише `main`) |
+
+webitel-emails і webitel-kb шифрують поля через `cryptostore.Codec` напряму, а не через
+`cryptostore/schema`, тож для них ці файли — копія їхнього коду: зміна набору шифрованих
+полів у сервісі йде разом із PR сюди.
 
 Формат — `cryptostore/schema.Config` у JSONC. Ключі `props` у `directory.wbt_session` на
 кшталт `oauth.id_token` **пласкі** (ключ з крапкою), це не вкладені шляхи.

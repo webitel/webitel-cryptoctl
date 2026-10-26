@@ -1,6 +1,6 @@
 {
   "dsn": "postgres:",
   "schema": {
-    "files": ["directory.jsonc", "chat.jsonc", "call_center.jsonc"]
+    "files": ["directory.jsonc", "chat.jsonc", "call_center.jsonc", "email.jsonc", "kb.jsonc"]
   }
 }
