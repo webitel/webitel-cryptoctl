@@ -1,0 +1,24 @@
+// Field schema of the "call_center" database schema (projects: engine, flow_manager).
+// A cryptostore/schema Config: unit (table) → fields (columns) → policy.
+// Every table is described here only; services import it as a baseline.
+{
+  "version": 1,
+  "units": {
+    "call_center.cc_email_profile": {
+      "fields": {
+        "password": {},
+        "params": {
+          "nested": [
+            { "path": ["$.oauth2.client_secret"] }
+          ]
+        },
+        "token": {
+          "nested": [
+            { "path": ["access_token"] },
+            { "path": ["refresh_token"] }
+          ]
+        }
+      }
+    }
+  }
+}

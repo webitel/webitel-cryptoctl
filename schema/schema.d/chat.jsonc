@@ -1,0 +1,35 @@
+// Field schema of the "chat" database schema (project: chat_manager).
+// A cryptostore/schema Config: unit (table) → fields (columns) → policy.
+// Every table is described here only; services import it as a baseline.
+{
+  "version": 1,
+  "units": {
+    "chat.bot": {
+      "fields": {
+        "metadata": {
+          "nested": [
+            // custom
+            { "path": ["secret"] },
+            // viber
+            // telegram
+            { "path": ["token"] },
+            // infobip_whatsapp
+            { "path": ["api_key"] },
+            // gotd
+            { "path": ["api_hash"] },
+            // gotd: backup data
+            { "path": [".auth"] },
+            { "path": [".gotd"] },
+            // messenger
+            { "path": ["client_secret"] },
+            { "path": ["whatsapp_token"] },
+            // messenger: backup data
+            { "path": ["fb"] },
+            { "path": ["ig"] },
+            { "path": ["wa"] }
+          ]
+        }
+      }
+    }
+  }
+}

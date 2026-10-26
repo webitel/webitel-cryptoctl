@@ -1,0 +1,10 @@
+// The Webitel database: every field schema of the webitel-cryptoctl package, applied to
+// one postgres connection. The connection comes from the libpq environment (PGHOST,
+// PGPORT, PGUSER, PGPASSWORD, PGDATABASE, PGSSLMODE — see /etc/default/webitel-cryptoctl).
+// files resolve against CRYPTO_SCHEMA_DIR; a missing file fails cryptoctl at startup.
+{
+  "dsn": "postgres:",
+  "schema": {
+    "files": ["directory.jsonc", "chat.jsonc", "call_center.jsonc"]
+  }
+}

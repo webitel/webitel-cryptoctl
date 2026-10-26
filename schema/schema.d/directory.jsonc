@@ -1,0 +1,45 @@
+// Field schema of the "directory" database schema (project: webitel.go).
+// A cryptostore/schema Config: unit (table) → fields (columns) → policy.
+// Every table is described here only; services import it as a baseline.
+{
+  "version": 1,
+  "units": {
+    "directory.wbt_oauth_service": {
+      "fields": {
+        "client_secret": {}
+      }
+    },
+    "directory.wbt_user_token": {
+      "fields": {
+        "token": { "search": true }
+      }
+    },
+    "directory.wbt_session": {
+      "fields": {
+        "code": { "search": true },
+        "access": { "search": true },
+        "refresh": { "search": true },
+        // props keys are flat: "oauth.id_token" is ONE key containing a dot, not a path
+        "props": {
+          "nested": [
+            { "path": ["csrf"] },                // Cookie
+            { "path": ["pn-rpid"] },             // SSE PUSH
+            { "path": ["oauth.id_token"] },      // SSO Creds
+            { "path": ["oauth.access_token"] },  // SSO Creds
+            { "path": ["oauth.refresh_token"] }  // SSO Creds
+          ]
+        }
+      }
+    },
+    "directory.wbt_ldap": {
+      "fields": {
+        "password": {}
+      }
+    },
+    "directory.wbt_totp": {
+      "fields": {
+        "key": {}
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+package schema
+
+import (
+	_ "embed"
+
+	cryptoschema "github.com/webitel/crypto/cryptostore/schema"
+)
+
+var (
+	//go:embed schema.d/directory.jsonc
+	directoryJSON string
+	//go:embed schema.d/chat.jsonc
+	chatJSON string
+	//go:embed schema.d/call_center.jsonc
+	callCenterJSON string
+)
+
+var (
+	// Directory is the schema of the directory.* tables (webitel.go).
+	Directory = cryptoschema.MustParseConfig(directoryJSON)
+	// Chat is the schema of the chat.* tables (chat_manager).
+	Chat = cryptoschema.MustParseConfig(chatJSON)
+	// CallCenter is the schema of the call_center.* tables (engine, flow_manager).
+	CallCenter = cryptoschema.MustParseConfig(callCenterJSON)
+)

@@ -1,0 +1,41 @@
+#!/bin/sh
+# webitel-cryptoctl runs cryptoctl with the Webitel store and field schemas shipped by the
+# webitel-cryptoctl package. Settings (database connection, CRYPTO_* overrides) come from
+# /etc/default/webitel-cryptoctl; a variable already set in the caller's environment wins
+# over the file, so a single run can override one, e.g. PGHOST=db2 webitel-cryptoctl status.
+#
+# The file is read like a systemd EnvironmentFile (the services' /etc/default files):
+# KEY=value lines, values taken literally (one pair of surrounding quotes is removed),
+# a repeated key takes its last value, and nothing in the file is executed.
+set -eu
+
+envfile=/etc/default/webitel-cryptoctl
+if [ -r "$envfile" ]; then
+	fromfile=" " # names assigned from the file so far
+	while IFS= read -r line || [ -n "$line" ]; do
+		case $line in
+		[A-Za-z_]*=*) name=${line%%=*} ;;
+		*) continue ;; # comments, blank lines
+		esac
+		case $name in *[!A-Za-z0-9_]*) continue ;; esac
+		case $fromfile in
+		*" $name "*) ;; # repeated in the file: the last value wins
+		*)
+			eval "[ -n \"\${$name+set}\" ]" && continue # set by the caller: the caller wins
+			fromfile="$fromfile$name "
+			;;
+		esac
+		value=${line#*=}
+		case $value in
+		\"*\") value=${value#\"} value=${value%\"} ;;
+		\'*\') value=${value#\'} value=${value%\'} ;;
+		esac
+		export "$name=$value"
+	done <"$envfile"
+fi
+
+: "${CRYPTO_STORE_DIR:=/usr/share/webitel/crypto/store.d}"
+: "${CRYPTO_SCHEMA_DIR:=/usr/share/webitel/crypto/schema.d}"
+export CRYPTO_STORE_DIR CRYPTO_SCHEMA_DIR
+
+exec /usr/local/bin/cryptoctl "$@"
