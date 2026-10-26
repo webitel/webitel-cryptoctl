@@ -13,14 +13,12 @@ import (
 	"github.com/webitel/crypto/encoding/jsonc"
 )
 
-// Paths the wrapper hardcodes; the tests redirect them into a temp dir.
 const (
 	wrapperEnvFile = "/etc/default/webitel-cryptoctl"
 	wrapperBinary  = "/usr/local/bin/cryptoctl"
 )
 
-// wrapper is a test copy of bin/webitel-cryptoctl whose env file and cryptoctl binary
-// live in a temp dir; the fake cryptoctl prints its environment and arguments.
+// wrapper runs a copy of bin/webitel-cryptoctl against a fake cryptoctl that prints its env and args.
 type wrapper struct {
 	dir, script, envFile string
 }
@@ -53,11 +51,9 @@ func (w *wrapper) writeEnvFile(t *testing.T, content string) {
 	}
 }
 
-// run executes the wrapper with only PATH plus env in its environment and returns the
-// fake cryptoctl's view: variables and arguments.
 func (w *wrapper) run(t *testing.T, env []string, args ...string) (vars map[string]string, argv []string) {
 	t.Helper()
-	shell := os.Getenv("TEST_SHELL") // e.g. /bin/dash, Debian's /bin/sh
+	shell := os.Getenv("TEST_SHELL") // e.g. /bin/dash
 	if shell == "" {
 		shell = "/bin/sh"
 	}
@@ -145,8 +141,6 @@ func TestWrapperStoreDirOverride(t *testing.T) {
 	}
 }
 
-// TestStoreConfigReferencesAllSchemas: store.d includes every packaged schema file, and
-// each one exists — a missing file would fail cryptoctl at startup.
 func TestStoreConfigReferencesAllSchemas(t *testing.T) {
 	raw, err := os.ReadFile("store.d/pg.jsonc")
 	if err != nil {
@@ -197,9 +191,7 @@ func TestEnvExampleAllCommented(t *testing.T) {
 	}
 }
 
-// TestWrapperValuesAreLiteral: like a systemd EnvironmentFile (the services' own
-// /etc/default files), values are taken literally — a keyring copied from a service
-// env file must reach cryptoctl unchanged, and nothing in the file is executed.
+// TestWrapperValuesAreLiteral: values are literal, as in a systemd EnvironmentFile.
 func TestWrapperValuesAreLiteral(t *testing.T) {
 	w := newWrapper(t)
 	marker := filepath.Join(w.dir, "executed")
@@ -224,7 +216,6 @@ func TestWrapperValuesAreLiteral(t *testing.T) {
 	}
 }
 
-// TestWrapperLastAssignmentWins: a repeated key takes its last value, as in systemd.
 func TestWrapperLastAssignmentWins(t *testing.T) {
 	w := newWrapper(t)
 	w.writeEnvFile(t, "PGHOST=db1\nPGHOST=db2\n")

@@ -1,6 +1,3 @@
-// Field schema of the "directory" database schema (project: webitel.go).
-// A cryptostore/schema Config: unit (table) → fields (columns) → policy.
-// Every table is described here only; services import it as a baseline.
 {
   "version": 1,
   "units": {
@@ -19,7 +16,6 @@
         "code": { "search": true },
         "access": { "search": true },
         "refresh": { "search": true },
-        // props keys are flat: "oauth.id_token" is ONE key containing a dot, not a path
         "props": {
           "nested": [
             { "path": ["csrf"] },                // Cookie

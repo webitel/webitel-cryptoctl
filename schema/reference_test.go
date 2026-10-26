@@ -2,9 +2,7 @@ package schema_test
 
 import cryptoschema "github.com/webitel/crypto/cryptostore/schema"
 
-// reference is the developer's consolidated Webitel schema (cmd/cryptoctl/webitel.go,
-// built with -tags=webitel before this repository existed), kept verbatim: the split
-// per-database-schema files must merge back into exactly this.
+// reference is the former cmd/cryptoctl/webitel.go schema, verbatim.
 var reference = cryptoschema.Config{
 	Version: 1,
 	Units: map[string]*cryptoschema.Unit{

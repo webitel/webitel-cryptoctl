@@ -20,8 +20,6 @@ func mustJSON(t *testing.T, v any) string {
 	return string(data)
 }
 
-// TestMergedEqualsReference: splitting the schema by database schema lost nothing and
-// changed nothing — the three files merge back into the reference.
 func TestMergedEqualsReference(t *testing.T) {
 	got := cryptoschema.MergeConfig(cryptoschema.MergeConfig(schema.Directory, schema.Chat), schema.CallCenter)
 	if !reflect.DeepEqual(got, &reference) {
@@ -29,14 +27,12 @@ func TestMergedEqualsReference(t *testing.T) {
 	}
 }
 
-// configs names each baseline by the database schema its units must belong to.
 var configs = map[string]*cryptoschema.Config{
 	"directory":   schema.Directory,
 	"chat":        schema.Chat,
 	"call_center": schema.CallCenter,
 }
 
-// TestUnitsDisjoint: every table is described in exactly one file.
 func TestUnitsDisjoint(t *testing.T) {
 	owner := map[string]string{}
 	for name, c := range configs {
@@ -49,7 +45,6 @@ func TestUnitsDisjoint(t *testing.T) {
 	}
 }
 
-// TestUnitsMatchFilePrefix: a file holds only the units of its own database schema.
 func TestUnitsMatchFilePrefix(t *testing.T) {
 	for name, c := range configs {
 		if len(c.Units) == 0 {
@@ -63,8 +58,7 @@ func TestUnitsMatchFilePrefix(t *testing.T) {
 	}
 }
 
-// TestFlatDottedKeyPreserved: wbt_session.props keys such as "oauth.id_token" are flat
-// keys containing a dot (that is how props is stored), not nested paths.
+// TestFlatDottedKeyPreserved: props keys like "oauth.id_token" are flat keys, not paths.
 func TestFlatDottedKeyPreserved(t *testing.T) {
 	props := schema.Directory.Units["directory.wbt_session"].Fields["props"]
 	for _, attr := range props.Nested {
