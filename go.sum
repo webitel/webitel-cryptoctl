@@ -152,8 +152,8 @@ github.com/webitel/crypto/cryptostore/blobstore v0.3.0 h1:Bfp4JGF6QsHAopHnNNtaRG
 github.com/webitel/crypto/cryptostore/blobstore v0.3.0/go.mod h1:ehlmQs+9s1Mo5Ls/wSTziIR+7e1kj75XP17Wp2qQShI=
 github.com/webitel/crypto/cryptostore/blobstore/gocloud v0.3.0 h1:rigBg3RdXwZVjNmQKX10uBwMQAQhESq858EMj8Yn9Z4=
 github.com/webitel/crypto/cryptostore/blobstore/gocloud v0.3.0/go.mod h1:iNRcuXqQvr8ROnd78FoK9S3wKHKq5H7M4sRAvOOpXq4=
-github.com/webitel/crypto/cryptostore/postgres v0.3.0 h1:CtB7inUMrtWCgr7tvJ4aO7mH44BKLGN2sxnXa1fTnus=
-github.com/webitel/crypto/cryptostore/postgres v0.3.0/go.mod h1:+hTanZZsKYJM2SXcqWjS5Wgm+ej/8+uqxkjX+o6LOkI=
+github.com/webitel/crypto/cryptostore/postgres v0.3.1 h1:/xTerU/GXz00pbbX4picgDLeZx2PnOSC2g7IvH3sUgU=
+github.com/webitel/crypto/cryptostore/postgres v0.3.1/go.mod h1:+hTanZZsKYJM2SXcqWjS5Wgm+ej/8+uqxkjX+o6LOkI=
 github.com/webitel/crypto/encoding/jsonc v0.1.0 h1:Utaem86xUXv6y3UeHd0thFCxj+PuG4Wku4vE1SHenzE=
 github.com/webitel/crypto/encoding/jsonc v0.1.0/go.mod h1:i1PWHoKplqTsQpN3LK+qzyeGKmwd0HIVtHwaUWE2OZc=
 github.com/webitel/crypto/env v0.2.0 h1:WSw59p7FBqhc26O8f9HCM2Sgpe1UplFf8t2nEv/pC7I=

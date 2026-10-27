@@ -65,7 +65,7 @@ require (
 	github.com/webitel/crypto/cryptobox v0.3.0 // indirect
 	github.com/webitel/crypto/cryptostore/blobstore v0.3.0 // indirect
 	github.com/webitel/crypto/cryptostore/blobstore/gocloud v0.3.0 // indirect
-	github.com/webitel/crypto/cryptostore/postgres v0.3.0 // indirect
+	github.com/webitel/crypto/cryptostore/postgres v0.3.1 // indirect
 	github.com/webitel/crypto/env v0.2.0 // indirect
 	github.com/webitel/webitel-cryptoctl/schema v0.1.0
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
