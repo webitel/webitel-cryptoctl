@@ -2,8 +2,6 @@ module github.com/webitel/webitel-cryptoctl
 
 go 1.25.0
 
-tool github.com/webitel/crypto/cmd/cryptoctl
-
 require (
 	github.com/webitel/crypto/cryptostore v0.3.0
 	github.com/webitel/crypto/encoding/jsonc v0.1.0
@@ -63,12 +61,13 @@ require (
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/spiffe/go-spiffe/v2 v2.6.0 // indirect
-	github.com/webitel/crypto/cmd/cryptoctl v0.3.0 // indirect
+	github.com/webitel/crypto/cmd/cryptoctl v0.4.0
 	github.com/webitel/crypto/cryptobox v0.3.0 // indirect
 	github.com/webitel/crypto/cryptostore/blobstore v0.3.0 // indirect
 	github.com/webitel/crypto/cryptostore/blobstore/gocloud v0.3.0 // indirect
 	github.com/webitel/crypto/cryptostore/postgres v0.3.0 // indirect
 	github.com/webitel/crypto/env v0.2.0 // indirect
+	github.com/webitel/webitel-cryptoctl/schema v0.1.0
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/detectors/gcp v1.42.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.67.0 // indirect
@@ -98,3 +97,5 @@ require (
 	modernc.org/memory v1.11.0 // indirect
 	modernc.org/sqlite v1.52.0 // indirect
 )
+
+replace github.com/webitel/webitel-cryptoctl/schema => ./schema

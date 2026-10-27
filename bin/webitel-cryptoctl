@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs cryptoctl on the packaged store and schemas. /etc/default/webitel-cryptoctl is read
+# Runs cryptoctl (Webitel schemas compiled in) on the packaged store. /etc/default/webitel-cryptoctl is read
 # like a systemd EnvironmentFile (literal values); the caller's environment wins.
 set -eu
 
@@ -29,7 +29,6 @@ if [ -r "$envfile" ]; then
 fi
 
 : "${CRYPTO_STORE_DIR:=/usr/share/webitel/crypto/store.d}"
-: "${CRYPTO_SCHEMA_DIR:=/usr/share/webitel/crypto/schema.d}"
-export CRYPTO_STORE_DIR CRYPTO_SCHEMA_DIR
+export CRYPTO_STORE_DIR
 
 exec /usr/local/bin/cryptoctl "$@"

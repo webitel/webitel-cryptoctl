@@ -1,7 +1,8 @@
-package webitelcryptoctl_test
+package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -9,7 +10,6 @@ import (
 	"strings"
 	"testing"
 
-	cryptoschema "github.com/webitel/crypto/cryptostore/schema"
 	"github.com/webitel/crypto/encoding/jsonc"
 )
 
@@ -84,9 +84,6 @@ func TestWrapperDefaults(t *testing.T) {
 	if got, want := vars["CRYPTO_STORE_DIR"], "/usr/share/webitel/crypto/store.d"; got != want {
 		t.Errorf("CRYPTO_STORE_DIR = %q, want %q", got, want)
 	}
-	if got, want := vars["CRYPTO_SCHEMA_DIR"], "/usr/share/webitel/crypto/schema.d"; got != want {
-		t.Errorf("CRYPTO_SCHEMA_DIR = %q, want %q", got, want)
-	}
 	if want := []string{"status", "a b"}; !slices.Equal(argv, want) {
 		t.Errorf("args = %q, want %q", argv, want)
 	}
@@ -135,20 +132,22 @@ func TestWrapperMissingEnvFile(t *testing.T) {
 
 func TestWrapperStoreDirOverride(t *testing.T) {
 	w := newWrapper(t)
-	vars, _ := w.run(t, []string{"CRYPTO_STORE_DIR=/x", "CRYPTO_SCHEMA_DIR=/y"})
-	if vars["CRYPTO_STORE_DIR"] != "/x" || vars["CRYPTO_SCHEMA_DIR"] != "/y" {
-		t.Errorf("CRYPTO_STORE_DIR = %q, CRYPTO_SCHEMA_DIR = %q; want /x, /y", vars["CRYPTO_STORE_DIR"], vars["CRYPTO_SCHEMA_DIR"])
+	vars, _ := w.run(t, []string{"CRYPTO_STORE_DIR=/x"})
+	if vars["CRYPTO_STORE_DIR"] != "/x" {
+		t.Errorf("CRYPTO_STORE_DIR = %q, want /x", vars["CRYPTO_STORE_DIR"])
 	}
 }
 
-func TestStoreConfigReferencesAllSchemas(t *testing.T) {
+// TestStoreConfigUsesBaseline: the store carries no schema of its own; the compiled-in
+// baseline (main.go) applies to it.
+func TestStoreConfigUsesBaseline(t *testing.T) {
 	raw, err := os.ReadFile("store.d/pg.jsonc")
 	if err != nil {
 		t.Fatal(err)
 	}
 	var store struct {
-		DSN    string                     `json:"dsn"`
-		Schema cryptoschema.IncludeConfig `json:"schema"`
+		DSN    string          `json:"dsn"`
+		Schema json.RawMessage `json:"schema"`
 	}
 	if err := jsonc.Unmarshal(raw, &store); err != nil {
 		t.Fatalf("store.d/pg.jsonc: %v", err)
@@ -156,26 +155,8 @@ func TestStoreConfigReferencesAllSchemas(t *testing.T) {
 	if store.DSN != "postgres:" {
 		t.Errorf("dsn = %q, want %q (connection from libpq environment)", store.DSN, "postgres:")
 	}
-	files, err := filepath.Glob("schema/schema.d/*.jsonc")
-	if err != nil {
-		t.Fatal(err)
-	}
-	var want []string
-	for _, f := range files {
-		want = append(want, filepath.Base(f))
-	}
-	got := slices.Clone(store.Schema.Files)
-	slices.Sort(got)
-	slices.Sort(want)
-	if !slices.Equal(got, want) {
-		t.Errorf("store.d schema files = %q, want every schema/schema.d/*.jsonc %q", got, want)
-	}
-	if _, err := store.Schema.Config(t.TempDir()); err == nil {
-		t.Errorf("include resolved without a schema dir; want an error for missing files")
-	}
-	cfg, err := cryptoschema.IncludeConfig{Dir: "schema/schema.d", Files: store.Schema.Files}.Config(".")
-	if err != nil || cfg == nil || len(cfg.Units) == 0 {
-		t.Errorf("include of schema/ = %v, %v; want merged units", cfg, err)
+	if len(store.Schema) != 0 {
+		t.Errorf("store.d/pg.jsonc has a schema section %s; the baseline is compiled in", store.Schema)
 	}
 }
 

@@ -4,8 +4,10 @@
 
 - **Go-модуль** `github.com/webitel/webitel-cryptoctl/schema` (окремий `schema/go.mod`, лише
   `cryptostore`): baseline-схеми, які сервіси вкомпільовують (`schema.Register(wcrypto.CallCenter)`).
-  Корінь репо — окремий модуль з `cryptoctl` як tool; сервіси його не імпортують.
-- **Deb-пакет `webitel-cryptoctl`**: ті самі схеми, конфіг сховища, `cryptoctl` і обгортка
+- **Webitel-збірка `cryptoctl`** (корінь репо, `main.go`): `cli.Main()` з
+  `github.com/webitel/crypto/cmd/cryptoctl/cli`, а схеми вкомпільовано як **baseline**
+  (`schema.Register`): адмін-конфіг їх не послабить і не загубить.
+- **Deb-пакет `webitel-cryptoctl`**: цей `cryptoctl`, конфіг сховища і обгортка
   `webitel-cryptoctl` для ops (`status`, `usage`, `migrate`, `can-retire`, …).
 
 Бібліотека й утиліта живуть у [`github.com/webitel/crypto`](https://github.com/webitel/crypto)
@@ -26,8 +28,8 @@
 
 ### Як змінити схему
 
-1. PR у цей репо: зміна `.jsonc` у `schema/schema.d/`. Новий файл додається в `schema.go`
-   і `store.d/pg.jsonc` (у пакет іде весь каталог `schema/schema.d/`).
+1. PR у цей репо: зміна `.jsonc` у `schema/schema.d/`. Новий файл додається в
+   `schema/schema.go` і в список `main.go`.
 2. Теги `schema/vX.Y.Z` і deb `vA.B.C` з `A.B.C >= X.Y.Z` (лише на гілці релізу, див. нижче),
    а потім `go get github.com/webitel/webitel-cryptoctl/schema@vX.Y.Z` у **всіх** сервісах, які пишуть у змінену таблицю. Вони виходять разом: якщо один сервіс
    шифрує поле, а інший про це не знає, вони ламають дані одне одному в БД.
@@ -53,7 +55,7 @@
 
 ```bash
 git switch v26.10
-go get -tool github.com/webitel/crypto/cmd/cryptoctl@vA.B.C
+go get github.com/webitel/crypto/cmd/cryptoctl@vA.B.C
 go mod tidy
 # PR → тег наступного patch на v26.10
 ```
@@ -61,16 +63,15 @@ go mod tidy
 ## Пакет `webitel-cryptoctl`
 
 ```
-/usr/share/webitel/crypto/schema.d/*.jsonc   схеми (належать пакету)
-/usr/share/webitel/crypto/store.d/pg.jsonc   одне postgres-сховище з усіма схемами
-/usr/local/bin/cryptoctl                     cryptoctl (з github.com/webitel/crypto/cmd/cryptoctl)
+/usr/share/webitel/crypto/store.d/pg.jsonc   одне postgres-сховище (схеми — baseline у бінарнику)
+/usr/local/bin/cryptoctl                     Webitel-збірка cryptoctl
 /usr/bin/webitel-cryptoctl                   обгортка
 /etc/default/webitel-cryptoctl               налаштування (conffile, 0640)
 ```
 
 `webitel-cryptoctl` бере налаштування з `/etc/default/webitel-cryptoctl` (підключення `PG*`,
-перевизначення `CRYPTO_*`), задає `CRYPTO_STORE_DIR`/`CRYPTO_SCHEMA_DIR` на файли пакета
-і запускає `cryptoctl`. Змінна, задана під час виклику, важить більше за файл:
+перевизначення `CRYPTO_*`), задає `CRYPTO_STORE_DIR` на `store.d` пакета і запускає
+`cryptoctl`. Змінна, задана під час виклику, важить більше за файл:
 
 ```bash
 webitel-cryptoctl status
