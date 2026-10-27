@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/webitel/crypto/cmd/cryptoctl/cli"
 	"github.com/webitel/crypto/cryptostore/schema"
+
 	wcrypto "github.com/webitel/webitel-cryptoctl/schema"
 )
 

@@ -13,10 +13,12 @@ import (
 
 func mustJSON(t *testing.T, v any) string {
 	t.Helper()
+
 	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	return string(data)
 }
 
@@ -35,11 +37,13 @@ var configs = map[string]*cryptoschema.Config{
 
 func TestUnitsDisjoint(t *testing.T) {
 	owner := map[string]string{}
+
 	for name, c := range configs {
 		for unit := range c.Units {
 			if prev, dup := owner[unit]; dup {
 				t.Errorf("unit %q is described in both %s and %s", unit, prev, name)
 			}
+
 			owner[unit] = name
 		}
 	}
@@ -50,6 +54,7 @@ func TestUnitsMatchFilePrefix(t *testing.T) {
 		if len(c.Units) == 0 {
 			t.Errorf("%s: no units", name)
 		}
+
 		for unit := range c.Units {
 			if !strings.HasPrefix(unit, name+".") {
 				t.Errorf("%s: unit %q does not belong to schema %q", name, unit, name)
@@ -66,11 +71,13 @@ func TestFlatDottedKeyPreserved(t *testing.T) {
 			t.Errorf("props attribute %v split into segments; want one flat key", attr.Path)
 		}
 	}
+
 	want := cryptoschema.FieldNested{Path: []string{"oauth.id_token"}}
 	for _, attr := range props.Nested {
 		if reflect.DeepEqual(attr, want) {
 			return
 		}
 	}
+
 	t.Errorf("props has no flat key %q", "oauth.id_token")
 }
