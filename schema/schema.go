@@ -1,9 +1,9 @@
 package schema
 
 import (
-	_ "embed"
-
 	cryptoschema "github.com/webitel/crypto/cryptostore/schema"
+
+	_ "embed"
 )
 
 var (

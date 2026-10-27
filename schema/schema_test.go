@@ -14,10 +14,12 @@ import (
 
 func mustJSON(t *testing.T, v any) string {
 	t.Helper()
+
 	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	return string(data)
 }
 
@@ -38,11 +40,13 @@ var configs = map[string]*cryptoschema.Config{
 
 func TestUnitsDisjoint(t *testing.T) {
 	owner := map[string]string{}
+
 	for name, c := range configs {
 		for unit := range c.Units {
 			if prev, dup := owner[unit]; dup {
 				t.Errorf("unit %q is described in both %s and %s", unit, prev, name)
 			}
+
 			owner[unit] = name
 		}
 	}
@@ -53,6 +57,7 @@ func TestUnitsMatchFilePrefix(t *testing.T) {
 		if len(c.Units) == 0 {
 			t.Errorf("%s: no units", name)
 		}
+
 		for unit := range c.Units {
 			if !strings.HasPrefix(unit, name+".") {
 				t.Errorf("%s: unit %q does not belong to schema %q", name, unit, name)
@@ -69,12 +74,14 @@ func TestFlatDottedKeyPreserved(t *testing.T) {
 			t.Errorf("props attribute %v split into segments; want one flat key", attr.Path)
 		}
 	}
+
 	want := cryptoschema.FieldNested{Path: []string{"oauth.id_token"}}
 	for _, attr := range props.Nested {
 		if reflect.DeepEqual(attr, want) {
 			return
 		}
 	}
+
 	t.Errorf("props has no flat key %q", "oauth.id_token")
 }
 
@@ -83,22 +90,29 @@ func TestDevSchemas(t *testing.T) {
 		"email.profile":      {"oauth_client_secret", "oauth_refresh_token", "password"},
 		"kb.embedding_model": {"config"},
 	}
+
 	for _, c := range []*cryptoschema.Config{schema.Email, schema.KB} {
 		for unit, u := range c.Units {
-			var got []string
+			got := make([]string, 0, len(u.Fields))
+
 			for f, p := range u.Fields {
 				if p.Search || len(p.Nested) > 0 {
 					t.Errorf("%s.%s: want a plain scalar field", unit, f)
 				}
+
 				got = append(got, f)
 			}
+
 			slices.Sort(got)
+
 			if !slices.Equal(got, want[unit]) {
 				t.Errorf("%s fields = %q, want %q", unit, got, want[unit])
 			}
+
 			delete(want, unit)
 		}
 	}
+
 	for unit := range want {
 		t.Errorf("unit %s missing", unit)
 	}
